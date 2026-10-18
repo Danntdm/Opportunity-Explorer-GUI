@@ -1,18 +1,27 @@
 # Opportunity Explorer
 
-Analyzes an existing business workflow and recommends where automation or AI could
-realistically help, and which tasks should stay human-controlled. It only analyzes
-and recommends; it does not change any systems.
-
-- **Frontend:** React + Vite
-- **Backend:** Python + FastAPI (not added yet)
-- **AI:** OpenAI API (not connected yet)
-
-## Running locally
+## Setup (once)
 
 ```
 npm install
+cd server
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+```
+
+## Run
+
+Terminal 1:
+
+```
+cd server
+.venv\Scripts\python -m uvicorn main:app --reload
+```
+
+Terminal 2:
+
+```
 npm run dev
 ```
 
-Open http://localhost:5173.
+Open http://localhost:5173
