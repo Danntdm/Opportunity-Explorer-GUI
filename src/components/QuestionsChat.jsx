@@ -64,7 +64,7 @@ export default function QuestionsChat({ messages, done, loading, onAnswer, onRet
         <button className="secondary" onClick={onBack} disabled={loading}>
           ← Back
         </button>
-        <button onClick={onNext} disabled={!done}>
+        <button onClick={onNext} disabled={!done || loading}>
           Next: Opportunity Report →
         </button>
       </div>

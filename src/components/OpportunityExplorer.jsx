@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { sendChat } from '../api'
+import { getQuestions, getReport } from '../api'
 import Stepper from './Stepper'
 import DescribeStep from './DescribeStep'
 import QuestionsChat from './QuestionsChat'
@@ -11,18 +11,18 @@ export default function OpportunityExplorer() {
   const [stage, setStage] = useState(0)
   const [workflowName, setWorkflowName] = useState('')
   const [description, setDescription] = useState('')
-  const [messages, setMessages] = useState([])
-  const [done, setDone] = useState(false)
+  const [questions, setQuestions] = useState([])
+  const [answers, setAnswers] = useState([])
+  const [followUpsAsked, setFollowUpsAsked] = useState(false)
+  const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  async function askModel(history) {
+  async function run(action) {
     setLoading(true)
     setError('')
     try {
-      const data = await sendChat(workflowName, description, history)
-      setMessages([...history, { role: 'assistant', content: data.reply }])
-      setDone(data.done)
+      await action()
     } catch (err) {
       setError(err.message)
     } finally {
@@ -30,24 +30,57 @@ export default function OpportunityExplorer() {
     }
   }
 
-  function handleDescribeNext() {
-    setStage(1)
-    if (messages.length === 0) askModel([])
+  // Questions are generated once (1 request), then shown one at a time.
+  function loadQuestions() {
+    run(async () => setQuestions(await getQuestions(workflowName, description)))
   }
 
-  function handleAnswer(answer) {
-    const history = [...messages, { role: 'user', content: answer }]
-    setMessages(history)
-    askModel(history)
+  function handleDescribeNext() {
+    setStage(1)
+    if (questions.length === 0) loadQuestions()
+  }
+
+  // The report is generated once and reused when going back and forth. The first time,
+  // the AI may instead send up to 2 follow-up questions; after those, it writes the report.
+  function handleQuestionsNext() {
+    if (report) {
+      setStage(2)
+      return
+    }
+    run(async () => {
+      const qa = questions.map((question, i) => ({ question, answer: answers[i] }))
+      const data = await getReport(workflowName, description, qa, !followUpsAsked)
+      if (data.followUps) {
+        setQuestions([...questions, ...data.followUps])
+        setFollowUpsAsked(true)
+        return
+      }
+      setReport(data)
+      setStage(2)
+    })
   }
 
   function startOver() {
     setStage(0)
     setWorkflowName('')
     setDescription('')
-    setMessages([])
-    setDone(false)
+    setQuestions([])
+    setAnswers([])
+    setFollowUpsAsked(false)
+    setReport(null)
     setError('')
+  }
+
+  const done = questions.length > 0 && answers.length === questions.length
+  const messages = []
+  answers.forEach((answer, i) => {
+    messages.push({ role: 'assistant', content: questions[i] })
+    messages.push({ role: 'user', content: answer })
+  })
+  if (done) {
+    messages.push({ role: 'assistant', content: 'Thanks! Click Next to get your report.' })
+  } else if (questions.length > 0) {
+    messages.push({ role: 'assistant', content: questions[answers.length] })
   }
 
   return (
@@ -76,13 +109,13 @@ export default function OpportunityExplorer() {
           messages={messages}
           done={done}
           loading={loading}
-          onAnswer={handleAnswer}
-          onRetry={() => askModel(messages)}
+          onAnswer={(answer) => setAnswers([...answers, answer])}
+          onRetry={loadQuestions}
           onBack={() => setStage(0)}
-          onNext={() => setStage(2)}
+          onNext={handleQuestionsNext}
         />
       )}
-      {stage === 2 && <ReportStep onBack={() => setStage(1)} />}
+      {stage === 2 && report && <ReportStep report={report} onBack={() => setStage(1)} />}
     </div>
   )
 }
