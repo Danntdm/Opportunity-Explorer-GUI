@@ -60,6 +60,12 @@ export default function OpportunityExplorer() {
     })
   }
 
+  // Editing an answer clears the saved report so the next one uses the corrected answer.
+  function handleEdit(index, text) {
+    setAnswers(answers.map((answer, i) => (i === index ? text : answer)))
+    setReport(null)
+  }
+
   function startOver() {
     setStage(0)
     setWorkflowName('')
@@ -75,7 +81,7 @@ export default function OpportunityExplorer() {
   const messages = []
   answers.forEach((answer, i) => {
     messages.push({ role: 'assistant', content: questions[i] })
-    messages.push({ role: 'user', content: answer })
+    messages.push({ role: 'user', content: answer, answerIndex: i })
   })
   if (done) {
     messages.push({ role: 'assistant', content: 'Thanks! Click Next to get your report.' })
@@ -110,6 +116,7 @@ export default function OpportunityExplorer() {
           done={done}
           loading={loading}
           onAnswer={(answer) => setAnswers([...answers, answer])}
+          onEdit={handleEdit}
           onRetry={loadQuestions}
           onBack={() => setStage(0)}
           onNext={handleQuestionsNext}

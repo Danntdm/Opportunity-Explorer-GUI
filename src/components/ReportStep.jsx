@@ -1,3 +1,16 @@
+function getType(recommendation = '') {
+  const text = recommendation.toLowerCase()
+  if (text.includes('ai-assisted')) return 'AI'
+  if (text.includes('rule')) return 'RULE'
+  if (text.includes('human')) return 'HUMAN'
+  return 'UNKNOWN'
+}
+
+function Label({ kind, value }) {
+  const level = (value || 'Unknown').toLowerCase()
+  return <span className={`label ${kind}-${level}`}>{value || 'Unknown'}</span>
+}
+
 export default function ReportStep({ report, onBack }) {
   return (
     <div>
@@ -20,29 +33,35 @@ export default function ReportStep({ report, onBack }) {
       ))}
 
       <h3>Opportunities</h3>
-      {report.opportunities?.map((opp) => (
-        <section className="card" key={opp.task}>
-          <h4>{opp.task}</h4>
-          <p>
-            <strong>Recommendation:</strong> {opp.recommendation}
-            <br />
-            <strong>Improvement potential:</strong> {opp.potential}
-            <br />
-            <strong>Risk:</strong> {opp.risk}
-            <br />
-            <strong>Human review:</strong> {opp.humanReview}
-          </p>
-          <strong>Why this recommendation:</strong>
-          <ul>
-            {opp.reasons?.map((reason) => (
-              <li key={reason}>{reason}</li>
-            ))}
-          </ul>
-          <p>
-            <strong>Suggested experiment:</strong> {opp.experiment}
-          </p>
-        </section>
-      ))}
+      {report.opportunities?.map((opp) => {
+        const type = getType(opp.recommendation)
+        return (
+          <section className="card" key={opp.task}>
+            <h4>
+              <Label kind="type" value={type} /> {opp.task}
+            </h4>
+            <p>
+              <strong>Recommendation:</strong> {opp.recommendation}
+              <br />
+              <strong>Improvement potential:</strong> {opp.potential}
+              <br />
+              <strong>Risk:</strong> <Label kind="risk" value={opp.risk} />
+              <br />
+              <strong>Human review:</strong> {opp.humanReview}
+            </p>
+            <strong>Why this recommendation:</strong>
+            <ul>
+              {opp.reasons?.map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
+            <p>
+              <strong>{type === 'HUMAN' ? 'Suggested safeguard:' : 'Suggested experiment:'}</strong>{' '}
+              {opp.experiment}
+            </p>
+          </section>
+        )
+      })}
 
       <div className="actions">
         <button className="secondary" onClick={onBack}>
