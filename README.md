@@ -41,3 +41,28 @@ npm run dev
 ```
 
 Open http://localhost:5173
+
+If port 8000 is unavailable, start the backend with `--port 8001`. Before starting the frontend
+in PowerShell, set `$env:VITE_API_TARGET = "http://localhost:8001"` so its API requests use the
+alternate port.
+
+## Test
+
+Run the fast frontend and backend checks:
+
+```
+npm run test:all
+```
+
+The backend suite includes four live workflow regressions that are skipped by default so ordinary
+test runs do not call an AI provider. To run them in PowerShell with the provider settings from
+`server/.env`:
+
+```
+$env:RUN_LIVE_LLM_EVALS = "1"
+npm run test:server
+Remove-Item Env:RUN_LIVE_LLM_EVALS
+```
+
+The live checks cover mixed access requests, predictable warehouse reordering, ambiguous requests
+that require follow-up questions, and free-text event inquiries without an invented security issue.

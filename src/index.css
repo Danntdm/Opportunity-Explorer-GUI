@@ -482,6 +482,19 @@ button.link:hover:not(:disabled) {
   resize: none;
 }
 
+/* Sensitive information warning on step 1 (Notion-style yellow callout) */
+.alert.warning {
+  background: #fbf3db;
+  border-color: #f1e2b3;
+  color: #5c4712;
+}
+
+.panel .privacy-warning {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
 /* ---------- Report ---------- */
 
 .report-header {
