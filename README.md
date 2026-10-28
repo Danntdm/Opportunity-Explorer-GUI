@@ -42,6 +42,10 @@ npm run dev
 
 Open http://localhost:5173
 
+If port 8000 is unavailable, start the backend with `--port 8001`. Before starting the frontend
+in PowerShell, set `$env:VITE_API_TARGET = "http://localhost:8001"` so its API requests use the
+alternate port.
+
 ## Test
 
 Run the fast frontend and backend checks:
