@@ -45,7 +45,8 @@ export default function QuestionsChat({
   const waitingForReply = messages.length === 0 || messages.at(-1).role === 'user'
 
   return (
-    <div>
+    <div className="panel">
+      <p className="step-count">Step 2 of 3</p>
       <h2>Follow-up questions</h2>
       <p className="muted">Answer a few questions so the analysis has what it needs.</p>
 
@@ -87,7 +88,7 @@ export default function QuestionsChat({
             </div>
           )
         })}
-        {loading && <div className="bubble bot muted">Thinking…</div>}
+        {loading && <div className="bubble bot thinking">Thinking…</div>}
         {!loading && waitingForReply && (
           <div className="bubble bot">
             Something went wrong.{' '}

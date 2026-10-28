@@ -90,39 +90,49 @@ export default function OpportunityExplorer() {
   }
 
   return (
-    <div>
-      <div className="toolbar">
-        <button className="link" onClick={startOver}>
-          Start over
-        </button>
-      </div>
+    <>
+      <header className="topbar">
+        <div className="topbar-inner">
+          <div className="brand">
+            <span className="brand-mark" aria-hidden="true">
+              OE
+            </span>
+            Opportunity Explorer
+          </div>
+          <button className="ghost" onClick={startOver}>
+            Start over
+          </button>
+        </div>
+      </header>
 
-      <Stepper stages={STAGES} current={stage} />
+      <main className="container">
+        <Stepper stages={STAGES} current={stage} />
 
-      {error && <div className="alert error">{error}</div>}
+        {error && <div className="alert error">{error}</div>}
 
-      {stage === 0 && (
-        <DescribeStep
-          workflowName={workflowName}
-          description={description}
-          onNameChange={setWorkflowName}
-          onDescriptionChange={setDescription}
-          onNext={handleDescribeNext}
-        />
-      )}
-      {stage === 1 && (
-        <QuestionsChat
-          messages={messages}
-          done={done}
-          loading={loading}
-          onAnswer={(answer) => setAnswers([...answers, answer])}
-          onEdit={handleEdit}
-          onRetry={loadQuestions}
-          onBack={() => setStage(0)}
-          onNext={handleQuestionsNext}
-        />
-      )}
-      {stage === 2 && report && <ReportStep report={report} onBack={() => setStage(1)} />}
-    </div>
+        {stage === 0 && (
+          <DescribeStep
+            workflowName={workflowName}
+            description={description}
+            onNameChange={setWorkflowName}
+            onDescriptionChange={setDescription}
+            onNext={handleDescribeNext}
+          />
+        )}
+        {stage === 1 && (
+          <QuestionsChat
+            messages={messages}
+            done={done}
+            loading={loading}
+            onAnswer={(answer) => setAnswers([...answers, answer])}
+            onEdit={handleEdit}
+            onRetry={loadQuestions}
+            onBack={() => setStage(0)}
+            onNext={handleQuestionsNext}
+          />
+        )}
+        {stage === 2 && report && <ReportStep report={report} onBack={() => setStage(1)} />}
+      </main>
+    </>
   )
 }

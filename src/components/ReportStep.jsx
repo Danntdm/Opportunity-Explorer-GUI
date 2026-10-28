@@ -13,48 +13,78 @@ function Label({ kind, value }) {
 }
 
 export default function ReportStep({ report, onBack }) {
+  const sections = report.sections?.filter((section) => section.items?.length) || []
+  const opportunities = report.opportunities || []
+
   return (
     <div>
-      <h2>Opportunity Report: {report.workflowName}</h2>
+      <div className="report-header">
+        <p className="step-count">Step 3 of 3</p>
+        <h2>Opportunity Report</h2>
+        <p className="muted">{report.workflowName}</p>
+      </div>
 
-      <section className="card">
+      <section className="callout">
         <h3>Workflow summary</h3>
         <p>{report.summary}</p>
       </section>
 
-      {report.sections?.filter((section) => section.items?.length).map((section) => (
-        <section className="card" key={section.title}>
-          <h3>{section.title}</h3>
-          <ul>
-            {section.items?.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      <div className="section-grid">
+        {sections.map((section) => (
+          <section className="card" key={section.title}>
+            <h3>{section.title}</h3>
+            <ul>
+              {section.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
 
-      <h3>Opportunities</h3>
-      {report.opportunities?.map((opp) => {
+      <h3 className="section-heading">
+        Opportunities <span className="count">{opportunities.length}</span>
+      </h3>
+      {opportunities.map((opp) => {
         const type = getType(opp.recommendation)
         return (
-          <section className="card" key={opp.task}>
-            <h4>
-              <Label kind="type" value={type} /> {opp.task}
-            </h4>
-            <p>
-              <strong>Recommendation:</strong> {opp.recommendation}
-              <br />
-              <strong>Improvement potential:</strong> {opp.potential}
-              <br />
-              <strong>Risk:</strong> <Label kind="risk" value={opp.risk} />
-              <br />
-              <strong>Human review:</strong> {opp.humanReview}
-            </p>
-            <p>
-              <strong>{type === 'UNKNOWN' ? 'What to find out first:' : 'Suggested implementation:'}</strong>{' '}
-              {opp.implementation}
-            </p>
-            <strong>Why this recommendation:</strong>
+          <section className="card opportunity" key={opp.task}>
+            <div className="opp-title">
+              <Label kind="type" value={type} />
+              <h4>{opp.task}</h4>
+            </div>
+
+            <dl className="props">
+              <div>
+                <dt>Recommendation</dt>
+                <dd>{opp.recommendation}</dd>
+              </div>
+              <div>
+                <dt>Improvement potential</dt>
+                <dd>
+                  <span className="label plain">{opp.potential}</span>
+                </dd>
+              </div>
+              <div>
+                <dt>Risk</dt>
+                <dd>
+                  <Label kind="risk" value={opp.risk} />
+                </dd>
+              </div>
+              <div>
+                <dt>Human review</dt>
+                <dd>
+                  <span className="label plain">{opp.humanReview}</span>
+                </dd>
+              </div>
+            </dl>
+
+            <h5 className="block-title">
+              {type === 'UNKNOWN' ? 'What to find out first' : 'Suggested implementation'}
+            </h5>
+            <p>{opp.implementation}</p>
+
+            <h5 className="block-title">Why this recommendation</h5>
             <ul>
               {opp.reasons?.map((reason) => (
                 <li key={reason}>{reason}</li>
