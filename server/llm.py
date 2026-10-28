@@ -17,8 +17,12 @@ class LLMError(Exception):
         self.status_code = status_code
 
 
-def ask_json(instructions, content):
-    """Send one request and return the reply parsed as JSON."""
+def ask_json(instructions, content, model_setting="LLM_MODEL"):
+    """Send one request and return the reply parsed as JSON.
+
+    `model_setting` names the .env setting holding the model to use (for example
+    LLM_REPORT_MODEL). If it isn't set, LLM_MODEL is used.
+    """
     if not os.getenv("LLM_API_KEY"):
         raise LLMError("LLM_API_KEY is not set in server/.env", status_code=500)
 
@@ -28,7 +32,7 @@ def ask_json(instructions, content):
     )
     try:
         response = client.chat.completions.create(
-            model=os.getenv("LLM_MODEL"),
+            model=os.getenv(model_setting) or os.getenv("LLM_MODEL"),
             messages=[
                 {"role": "system", "content": instructions},
                 {"role": "user", "content": content},

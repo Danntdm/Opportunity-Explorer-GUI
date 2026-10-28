@@ -1,6 +1,7 @@
 function getType(recommendation = '') {
   const text = recommendation.toLowerCase()
   if (text.includes('ai-assisted')) return 'AI'
+  if (text.includes('safeguard')) return 'SAFEGUARD'
   if (text.includes('rule')) return 'RULE'
   if (text.includes('human')) return 'HUMAN'
   return 'UNKNOWN'
@@ -49,16 +50,16 @@ export default function ReportStep({ report, onBack }) {
               <br />
               <strong>Human review:</strong> {opp.humanReview}
             </p>
+            <p>
+              <strong>{type === 'UNKNOWN' ? 'What to find out first:' : 'Suggested implementation:'}</strong>{' '}
+              {opp.implementation}
+            </p>
             <strong>Why this recommendation:</strong>
             <ul>
               {opp.reasons?.map((reason) => (
                 <li key={reason}>{reason}</li>
               ))}
             </ul>
-            <p>
-              <strong>{type === 'HUMAN' ? 'Suggested safeguard:' : 'Suggested experiment:'}</strong>{' '}
-              {opp.experiment}
-            </p>
           </section>
         )
       })}
