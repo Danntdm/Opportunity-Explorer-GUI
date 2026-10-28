@@ -283,6 +283,11 @@ textarea:focus {
   color: #7a5300;
 }
 
+.privacy-warning {
+  border: 1px solid #f1d28a;
+  margin-top: -4px;
+}
+
 /* ---------- Report ---------- */
 
 .card {

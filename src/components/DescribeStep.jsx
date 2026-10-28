@@ -43,6 +43,17 @@ export default function DescribeStep({
         />
       </label>
 
+      <div
+        className="alert warning privacy-warning"
+        role="note"
+        aria-label="Sensitive information warning"
+      >
+        <strong>Protect sensitive information.</strong> Do not enter passwords, API keys,
+        credentials, or personal information that is not needed. Redact or summarize confidential
+        details before continuing. Your workflow description and answers are sent to the configured
+        AI provider for analysis.
+      </div>
+
       {validationError && <div className="alert error">{validationError}</div>}
 
       <div className="actions">
