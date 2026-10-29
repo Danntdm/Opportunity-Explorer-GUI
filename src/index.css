@@ -196,33 +196,12 @@ h3 {
   margin: 8px 0 28px;
 }
 
-.eyebrow-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 500;
-}
-
-.eyebrow-pill::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--blue);
-}
-
 .intro h1 {
   font-size: clamp(2rem, 5vw, 2.75rem);
   font-weight: 700;
   line-height: 1.12;
   letter-spacing: -0.03em;
-  margin: 16px 0 12px;
+  margin: 0 0 12px;
 }
 
 .intro h1 .soft {

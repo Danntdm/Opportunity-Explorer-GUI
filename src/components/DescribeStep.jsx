@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { DEMO_WORKFLOW, isDemoMode } from '../demo'
 
 export default function DescribeStep({
   workflowName,
@@ -22,7 +23,6 @@ export default function DescribeStep({
   return (
     <>
       <div className="intro">
-        <span className="eyebrow-pill">AI &amp; automation opportunities</span>
         <h1>
           Let&apos;s make your workflows <span className="soft">faster and more efficient.</span>
         </h1>
@@ -70,6 +70,19 @@ export default function DescribeStep({
         {validationError && <div className="alert error">{validationError}</div>}
 
         <div className="actions">
+          {isDemoMode && (
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => {
+                onNameChange(DEMO_WORKFLOW.name)
+                onDescriptionChange(DEMO_WORKFLOW.description)
+                setValidationError('')
+              }}
+            >
+              Load demo workflow
+            </button>
+          )}
           <button type="submit">Next: follow-up questions →</button>
         </div>
       </form>

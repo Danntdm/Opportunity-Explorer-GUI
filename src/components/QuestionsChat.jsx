@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { demoAnswerFor, isDemoMode } from '../demo'
 
 export default function QuestionsChat({
   messages,
@@ -43,6 +44,7 @@ export default function QuestionsChat({
   }
 
   const waitingForReply = messages.length === 0 || messages.at(-1).role === 'user'
+  const answeredCount = messages.filter((m) => m.role === 'user').length
 
   return (
     <div className="panel">
@@ -110,6 +112,16 @@ export default function QuestionsChat({
             placeholder="Type your answer… (Enter to send, Shift+Enter for a new line)"
             disabled={loading || waitingForReply}
           />
+          {isDemoMode && (
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => setDraft(demoAnswerFor(answeredCount))}
+              disabled={loading || waitingForReply}
+            >
+              Fill demo answer
+            </button>
+          )}
           <button type="submit" disabled={loading || waitingForReply || !draft.trim()}>
             Send
           </button>

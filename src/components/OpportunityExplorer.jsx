@@ -30,7 +30,6 @@ export default function OpportunityExplorer() {
     }
   }
 
-  // Questions are generated once (1 request), then shown one at a time.
   function loadQuestions() {
     run(async () => setQuestions(await getQuestions(workflowName, description)))
   }
@@ -40,8 +39,7 @@ export default function OpportunityExplorer() {
     if (questions.length === 0) loadQuestions()
   }
 
-  // The report is generated once and reused when going back and forth. The first time,
-  // the AI may instead send up to 2 follow-up questions; after those, it writes the report.
+ 
   function handleQuestionsNext() {
     if (report) {
       setStage(2)
@@ -60,7 +58,6 @@ export default function OpportunityExplorer() {
     })
   }
 
-  // Editing an answer clears the saved report so the next one uses the corrected answer.
   function handleEdit(index, text) {
     setAnswers(answers.map((answer, i) => (i === index ? text : answer)))
     setReport(null)
