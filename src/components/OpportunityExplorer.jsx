@@ -30,7 +30,6 @@ export default function OpportunityExplorer() {
     }
   }
 
-  // Questions are generated once (1 request), then shown one at a time.
   function loadQuestions() {
     run(async () => setQuestions(await getQuestions(workflowName, description)))
   }
@@ -40,8 +39,7 @@ export default function OpportunityExplorer() {
     if (questions.length === 0) loadQuestions()
   }
 
-  // The report is generated once and reused when going back and forth. The first time,
-  // the AI may instead send up to 2 follow-up questions; after those, it writes the report.
+ 
   function handleQuestionsNext() {
     if (report) {
       setStage(2)
@@ -60,7 +58,6 @@ export default function OpportunityExplorer() {
     })
   }
 
-  // Editing an answer clears the saved report so the next one uses the corrected answer.
   function handleEdit(index, text) {
     setAnswers(answers.map((answer, i) => (i === index ? text : answer)))
     setReport(null)
@@ -90,39 +87,49 @@ export default function OpportunityExplorer() {
   }
 
   return (
-    <div>
-      <div className="toolbar">
-        <button className="link" onClick={startOver}>
-          Start over
-        </button>
-      </div>
+    <>
+      <header className="topbar">
+        <div className="topbar-inner">
+          <div className="brand">
+            <span className="brand-mark" aria-hidden="true">
+              OE
+            </span>
+            Opportunity Explorer
+          </div>
+          <button className="ghost" onClick={startOver}>
+            Start over
+          </button>
+        </div>
+      </header>
 
-      <Stepper stages={STAGES} current={stage} />
+      <main className="container">
+        <Stepper stages={STAGES} current={stage} />
 
-      {error && <div className="alert error">{error}</div>}
+        {error && <div className="alert error">{error}</div>}
 
-      {stage === 0 && (
-        <DescribeStep
-          workflowName={workflowName}
-          description={description}
-          onNameChange={setWorkflowName}
-          onDescriptionChange={setDescription}
-          onNext={handleDescribeNext}
-        />
-      )}
-      {stage === 1 && (
-        <QuestionsChat
-          messages={messages}
-          done={done}
-          loading={loading}
-          onAnswer={(answer) => setAnswers([...answers, answer])}
-          onEdit={handleEdit}
-          onRetry={loadQuestions}
-          onBack={() => setStage(0)}
-          onNext={handleQuestionsNext}
-        />
-      )}
-      {stage === 2 && report && <ReportStep report={report} onBack={() => setStage(1)} />}
-    </div>
+        {stage === 0 && (
+          <DescribeStep
+            workflowName={workflowName}
+            description={description}
+            onNameChange={setWorkflowName}
+            onDescriptionChange={setDescription}
+            onNext={handleDescribeNext}
+          />
+        )}
+        {stage === 1 && (
+          <QuestionsChat
+            messages={messages}
+            done={done}
+            loading={loading}
+            onAnswer={(answer) => setAnswers([...answers, answer])}
+            onEdit={handleEdit}
+            onRetry={loadQuestions}
+            onBack={() => setStage(0)}
+            onNext={handleQuestionsNext}
+          />
+        )}
+        {stage === 2 && report && <ReportStep report={report} onBack={() => setStage(1)} />}
+      </main>
+    </>
   )
 }
