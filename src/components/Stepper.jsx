@@ -5,7 +5,9 @@ export default function Stepper({ stages, current }) {
         const state = i === current ? 'active' : i < current ? 'done' : ''
         return (
           <li key={label} className={state}>
-            <span className="step-dot">{state === 'done' ? '✓' : i + 1}</span>
+            <span className="step-dot" aria-hidden="true">
+              {state === 'done' ? '✓' : ''}
+            </span>
             <span className="step-label">{label}</span>
           </li>
         )

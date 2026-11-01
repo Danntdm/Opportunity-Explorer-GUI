@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { getQuestions, getReport } from '../api'
-import Stepper from './Stepper'
+import { deleteFromHistory, loadHistory, newAnalysisId, saveToHistory } from '../history'
+import Sidebar from './Sidebar'
 import DescribeStep from './DescribeStep'
 import QuestionsChat from './QuestionsChat'
 import ReportStep from './ReportStep'
@@ -17,6 +18,9 @@ export default function OpportunityExplorer() {
   const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [analysisId, setAnalysisId] = useState(newAnalysisId)
+  const [history, setHistory] = useState(loadHistory)
+  const [viewingId, setViewingId] = useState(null)
 
   async function run(action) {
     setLoading(true)
@@ -39,7 +43,7 @@ export default function OpportunityExplorer() {
     if (questions.length === 0) loadQuestions()
   }
 
- 
+
   function handleQuestionsNext() {
     if (report) {
       setStage(2)
@@ -54,6 +58,7 @@ export default function OpportunityExplorer() {
         return
       }
       setReport(data)
+      setHistory(saveToHistory({ id: analysisId, workflowName, createdAt: Date.now(), report: data }))
       setStage(2)
     })
   }
@@ -72,6 +77,23 @@ export default function OpportunityExplorer() {
     setFollowUpsAsked(false)
     setReport(null)
     setError('')
+    setAnalysisId(newAnalysisId())
+    setViewingId(null)
+  }
+
+  function openHistory(id) {
+    // The current analysis's own report opens as step 3; older reports open on their own.
+    if (id === analysisId && report) {
+      setViewingId(null)
+      setStage(2)
+    } else {
+      setViewingId(id)
+    }
+  }
+
+  function deleteHistory(id) {
+    setHistory(deleteFromHistory(id))
+    if (id === viewingId) setViewingId(null)
   }
 
   const done = questions.length > 0 && answers.length === questions.length
@@ -86,50 +108,62 @@ export default function OpportunityExplorer() {
     messages.push({ role: 'assistant', content: questions[answers.length] })
   }
 
+  const viewing = history.find((entry) => entry.id === viewingId)
+  const activeHistoryId = viewing ? viewing.id : stage === 2 ? analysisId : null
+
   return (
-    <>
-      <header className="topbar">
-        <div className="topbar-inner">
-          <div className="brand">
-            <span className="brand-mark" aria-hidden="true">
-              OE
-            </span>
-            Opportunity Explorer
-          </div>
-          <button className="ghost" onClick={startOver}>
-            Start over
-          </button>
+    <div className="app">
+      <Sidebar
+        stages={STAGES}
+        stage={stage}
+        history={history}
+        activeHistoryId={activeHistoryId}
+        onNewAnalysis={startOver}
+        onOpenHistory={openHistory}
+        onDeleteHistory={deleteHistory}
+      />
+
+      <main className="main">
+        <div className={`main-inner ${viewing || stage === 2 ? 'wide' : ''}`}>
+          {error && <div className="alert error">{error}</div>}
+
+          {viewing ? (
+            <ReportStep
+              report={viewing.report}
+              savedAt={viewing.createdAt}
+              backLabel="← Back to current analysis"
+              onBack={() => setViewingId(null)}
+            />
+          ) : (
+            <>
+              {stage === 0 && (
+                <DescribeStep
+                  workflowName={workflowName}
+                  description={description}
+                  onNameChange={setWorkflowName}
+                  onDescriptionChange={setDescription}
+                  onNext={handleDescribeNext}
+                />
+              )}
+              {stage === 1 && (
+                <QuestionsChat
+                  messages={messages}
+                  done={done}
+                  loading={loading}
+                  onAnswer={(answer) => setAnswers([...answers, answer])}
+                  onEdit={handleEdit}
+                  onRetry={loadQuestions}
+                  onBack={() => setStage(0)}
+                  onNext={handleQuestionsNext}
+                />
+              )}
+              {stage === 2 && report && <ReportStep report={report} onBack={() => setStage(1)} />}
+            </>
+          )}
         </div>
-      </header>
 
-      <main className="container">
-        <Stepper stages={STAGES} current={stage} />
-
-        {error && <div className="alert error">{error}</div>}
-
-        {stage === 0 && (
-          <DescribeStep
-            workflowName={workflowName}
-            description={description}
-            onNameChange={setWorkflowName}
-            onDescriptionChange={setDescription}
-            onNext={handleDescribeNext}
-          />
-        )}
-        {stage === 1 && (
-          <QuestionsChat
-            messages={messages}
-            done={done}
-            loading={loading}
-            onAnswer={(answer) => setAnswers([...answers, answer])}
-            onEdit={handleEdit}
-            onRetry={loadQuestions}
-            onBack={() => setStage(0)}
-            onNext={handleQuestionsNext}
-          />
-        )}
-        {stage === 2 && report && <ReportStep report={report} onBack={() => setStage(1)} />}
+        <footer className="footer">LA Tech Rising | Opportunity Explorer Project</footer>
       </main>
-    </>
+    </div>
   )
 }
