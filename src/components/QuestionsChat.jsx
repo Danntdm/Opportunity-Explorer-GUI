@@ -133,7 +133,7 @@ export default function QuestionsChat({
           ← Back
         </button>
         <button onClick={onNext} disabled={!done || loading}>
-          Next: Opportunity Report →
+          Next: Report →
         </button>
       </div>
     </div>

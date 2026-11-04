@@ -1,4 +1,3 @@
-// Recommendation types, in the order they're shown on the report.
 const TYPE_ORDER = ['RULE', 'AI', 'HUMAN', 'SAFEGUARD', 'UNKNOWN']
 const TYPE_NAMES = {
   RULE: 'Rule',
@@ -8,7 +7,6 @@ const TYPE_NAMES = {
   UNKNOWN: 'Needs more information',
 }
 
-// What each "Human review" value means, shown in the Human checkpoint box.
 const CHECKPOINTS = {
   required: ['approval required', 'A person must approve before anything happens.'],
   yes: ['review needed', 'A person checks the result before it is used.'],
@@ -39,11 +37,10 @@ function Tile({ tone = '', value, label, detail }) {
   )
 }
 
-// Opens the browser's print dialog with a print-only layout (see @media print in index.css),
-// where "Save as PDF" downloads the report. The page title becomes the suggested file name.
+
 function downloadPdf(workflowName) {
   const previousTitle = document.title
-  document.title = `Opportunity Report - ${workflowName}`
+  document.title = `KFlow Report - ${workflowName}`
   window.addEventListener('afterprint', () => (document.title = previousTitle), { once: true })
   window.print()
 }
@@ -118,17 +115,23 @@ export default function ReportStep({ report, savedAt, backLabel = '← Back', on
 
   return (
     <div>
+      {/* Only shown in the PDF, where the sidebar logo is hidden. */}
+      <div className="print-brand">
+        <img src="/kflow-icon.svg" width="28" height="28" alt="" />
+        KFlow
+      </div>
+
       <div className="report-header">
         <div>
           <p className="eyebrow">
             {savedAt ? (
               <>
-                Opportunity Report · Saved{' '}
+                Report · Saved{' '}
                 {new Date(savedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
               </>
             ) : (
               <>
-                <span className="no-print">Step 3 of 3 · </span>Opportunity Report
+                <span className="no-print">Step 3 of 3 · </span>Report
               </>
             )}
           </p>

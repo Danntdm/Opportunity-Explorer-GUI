@@ -6,7 +6,7 @@ import DescribeStep from './DescribeStep'
 import QuestionsChat from './QuestionsChat'
 import ReportStep from './ReportStep'
 
-const STAGES = ['Describe workflow', 'Follow-up questions', 'Opportunity Report']
+const STAGES = ['Describe workflow', 'Follow-up questions', 'Report']
 
 export default function OpportunityExplorer() {
   const [stage, setStage] = useState(0)
@@ -162,7 +162,7 @@ export default function OpportunityExplorer() {
           )}
         </div>
 
-        <footer className="footer">LA Tech Rising | Opportunity Explorer Project</footer>
+        <footer className="footer">LA Tech Rising | KFlow Project</footer>
       </main>
     </div>
   )

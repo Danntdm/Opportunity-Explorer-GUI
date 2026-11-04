@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
-// A small yes/no popup. Rendered at the end of <body> so it covers the whole page.
 export default function ConfirmDialog({ title, message, confirmLabel, onConfirm, onCancel }) {
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onCancel()

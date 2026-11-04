@@ -33,7 +33,6 @@ export default function Sidebar({
 }) {
   const [pendingDelete, setPendingDelete] = useState(null)
 
-  // History is stored newest first, so groups come out in order.
   const groups = []
   for (const entry of history) {
     const group = groupFor(entry.createdAt)
@@ -44,16 +43,8 @@ export default function Sidebar({
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-          <circle cx="13" cy="13" r="11.5" stroke="currentColor" strokeWidth="1.5" />
-          <path
-            d="M8 9.5h10M8 13h10M8 16.5h6"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
-        Opportunity Explorer
+        <img src="/kflow-icon.svg" width="26" height="26" alt="" />
+        KFlow
       </div>
 
       <button className="new-analysis" onClick={onNewAnalysis}>

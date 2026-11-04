@@ -1,4 +1,4 @@
-"""Opportunity Explorer API.
+"""KFlow API.
 
 Run with:  uvicorn main:app --reload   (from the server/ folder, see README)
 """
@@ -11,13 +11,13 @@ from llm import LLMError, ask_json
 
 load_dotenv()
 
-app = FastAPI(title="Opportunity Explorer API")
+app = FastAPI(title="KFlow API")
 
 NUM_QUESTIONS = 6
 MAX_FOLLOW_UPS = 2
 
 ROLE = """\
-You are the Opportunity Explorer. You help people analyze an existing business workflow
+You are KFlow. You help people analyze an existing business workflow
 to find realistic improvements. You never assume AI is the answer: sometimes AI helps,
 sometimes a simple rule (like a checklist or a required form field) is better, and sometimes a task is
 too risky to change and a person should stay in control.
@@ -111,7 +111,7 @@ Only ask follow-ups if they are truly needed; otherwise write the report.
 #   The colored AI / RULE / HUMAN / SAFEGUARD label is picked from them; anything else
 #   shows as UNKNOWN.
 REPORT_PROMPT = ROLE + """
-Write an Opportunity Report for the workflow, based on the description and the answers.
+Write a report for the workflow, based on the description and the answers.
 
 Reply with JSON only, in this exact shape:
 {
@@ -230,7 +230,7 @@ When selecting the final list:
 
 WHAT EACH OPPORTUNITY SHOULD RECOMMEND
 
-The Opportunity Explorer's main purpose is to interpret a workflow, identify meaningful
+KFlow's main purpose is to interpret a workflow, identify meaningful
 opportunities, and recommend concrete improvements that could actually be implemented.
 
 Do not stop at identifying a problem.
